@@ -458,10 +458,19 @@ sub parse_file_core{
 
   # make an output file
   my ($target, $directories) = fileparse($infile);
+  my $suf_found = 0;
   foreach my $suffix (@{$self->{InfileSuffixes}}) {
-      $self->{CurInfileSuffix} = $suffix;
-      last if ($target =~ s/\Q$suffix\E$//); # remove the input suffix
+      if ($target =~ /\Q$suffix\E$/) {
+          $self->{CurInfileSuffix} = $suffix;
+          $target =~ s/\Q$suffix\E$//; # remove the input suffix
+          $suf_found = 1;
+          last;
+      }
   }
+  if (!$suf_found) {
+      $self->error("$name: Couldn't find suffix for $target");
+  }
+
   $self->{OutputFileName} = $target . $self->{OutfileSuffix};
   $self->{OutfileHandle} = new FileHandle;
   open($self->{OutfileHandle}, ">$self->{OutputFileName}") ||
@@ -926,7 +935,7 @@ sub find_file_safe{
   print STDERR "$name: Searching for file $file\n" if $self->{Debug} & 2;
   if ($file =~ /^\//) {
     # file is absolute path
-    $filefound = 1 if (-e $file);
+    $filefound = 1 if (-f $file);
   }else {
     foreach $dir ($self->{CallDir}, @{$path}) {
 	# if relative path, start it from the dir from which the script was called
@@ -937,7 +946,7 @@ sub find_file_safe{
           $ffs_dir_cache{$dir} = {};
           my @files = map {basename $_} glob("$dir/*");
           foreach my $file (@files) {
-            $ffs_dir_cache{$dir}->{$file} = 1;
+            $ffs_dir_cache{$dir}->{$file} = 1 if (-f "$dir/$file");
           }
         }
 
