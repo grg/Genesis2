@@ -504,7 +504,7 @@ sub exists_param{
 sub list_params{
   my $self = shift;
   my $name =  $self->{BaseModuleName}."->list_params";
-  my @prms = keys (%{$self->{Parameters}});
+  my @prms = sort keys (%{$self->{Parameters}});
   return @prms;
 }
 
@@ -756,7 +756,7 @@ sub search_subinst{
     my $self = shift;
     my $name = $self->{BaseModuleName}."->search_subinst";
     my %options = @_;
-    my @keys = keys %options;
+    my @keys = sort keys %options;
     my @results = ();
     my $from = $self->get_top();
     my $depth = 10000;
@@ -1874,7 +1874,7 @@ sub get_unq_styles {
   my $name = __PACKAGE__."->get_unq_styles";
   caller eq __PACKAGE__ || caller eq 'Genesis2::Manager'
       or error("$name: access restricted to ".__PACKAGE__." or Genesis2::Manager");
-  return keys(%UNQ_STYLES);
+  return sort keys(%UNQ_STYLES);
 }
 
 ## default_unq_style
@@ -2016,7 +2016,7 @@ sub set_param{
       (GENESIS2_PRIORITY)[$self->{ParametersPriority}].
       "=".$self->{ParametersPriority}."<--\n" 
       if $self->{Debug} & 4;
-  foreach $prm_name (keys %prm_hash){
+  foreach $prm_name (sort keys %prm_hash){
     if (!defined $self->{Parameters}->{$prm_name}){
       $self->{Parameters}->{$prm_name}->{Val} = $self->deep_copy($prm_hash{$prm_name}, $prm_name);
       $self->set_param_priority($prm_name, $self->{ParametersPriority});
@@ -2496,7 +2496,7 @@ END_OF_MESSAGE
   # GENESIS2_INHERITANCE_PRIORITY
   print { $self->{OutfileHandle} } $self->{LineComment}. 
       "\tFrom 'generate' statement (priority=".GENESIS2_INHERITANCE_PRIORITY."):\n";
-  foreach my $prm (keys %{$self->{Parameters}}){
+  foreach my $prm (sort keys %{$self->{Parameters}}){
       print { $self->{OutfileHandle} } $self->{LineComment}.
 	  " Parameter $prm \t= undef\n" if !defined $self->{Parameters}->{$prm}->{Val};
       my $type = ref($self->{Parameters}->{$prm}->{Val});
@@ -2513,7 +2513,7 @@ END_OF_MESSAGE
   # GENESIS2_CMD_LINE_PRIORITY
   print { $self->{OutfileHandle} } $self->{LineComment}. 
       "\tFrom Command Line input (priority=".GENESIS2_CMD_LINE_PRIORITY."):\n";
-  foreach my $prm (keys %{$self->{ParamsFromCmdLn}}){
+  foreach my $prm (sort keys %{$self->{ParamsFromCmdLn}}){
       my $prm_val = $self->{CfgHandler}->GetCmdLnParamBrief($self->{ParamsFromCmdLn}->{$prm},
 							    $self->get_instance_path.':Parameters:ParamItem('.$prm.')'); 
       $prm_val = 'undef' if !defined $prm_val;
@@ -2527,7 +2527,7 @@ END_OF_MESSAGE
   # GENESIS2_EXTERNAL_XML_PRIORITY
   print { $self->{OutfileHandle} } $self->{LineComment}. 
       "\tFrom XML input (priority=".GENESIS2_EXTERNAL_XML_PRIORITY."):\n";
-  foreach my $prm (keys %{$self->{ParamsFromXML}}){
+  foreach my $prm (sort keys %{$self->{ParamsFromXML}}){
       my $prm_val = $self->{CfgHandler}->GetXmlParamBrief($self->{ParamsFromXML}->{$prm},
 						       $self->get_instance_path.':Parameters:ParamItem('.$prm.')'); 
       $prm_val = 'undef' if !defined $prm_val;
@@ -2542,7 +2542,7 @@ END_OF_MESSAGE
   # GENESIS2_EXTERNAL_CONFIG_PRIORITY
   print { $self->{OutfileHandle} } $self->{LineComment}. 
       "\tFrom Config File input (priority=".GENESIS2_EXTERNAL_CONFIG_PRIORITY."):\n";
-  foreach my $prm (keys %{$self->{ParamsFromCfg}}){
+  foreach my $prm (sort keys %{$self->{ParamsFromCfg}}){
       my $prm_val = $self->{CfgHandler}->GetCfgParamBrief($self->{ParamsFromCfg}->{$prm},
 						       $self->get_instance_path.':Parameters:ParamItem('.$prm.')');
       $prm_val = 'undef' if !defined $prm_val;
@@ -2701,7 +2701,7 @@ sub compare_generated_files{
 	}
 	
 	# Do the mapping of words as requested
-	foreach my $key (keys %options){
+	foreach my $key (sort keys %options){
 	    $lineA =~ s/(^|\W)$key(?=\W|$)/$1$options{$key}/g if defined $lineA;
 	}
 	if (defined $lineA && defined $lineB){
