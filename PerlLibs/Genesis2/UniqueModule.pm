@@ -1477,7 +1477,7 @@ sub ununique_inst{
       return $instance;
     } else {
       # Files don't match but they should if we're generating ununiquie
-      $self->error("$name: Will generate two different UN-uniquified $base_module_name motules!");
+      $self->error("$name: Will generate two different UN-uniquified $base_module_name modules!");
     }
   }
 
