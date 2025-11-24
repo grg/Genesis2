@@ -1067,8 +1067,8 @@ sub unique_inst{
     my $prev_inst = $self->{ModuleCache}{$param_module_name};
 
     if ($self->does_generate_same($instance, $prev_inst)) {
-      my $prev_module = $base_module_name . $instance_param_list;
-      my $prev_file_name = $prev_module . $instance->{OutfileSuffix};
+      my $prev_module = $prev_inst->{UniqueModuleName};
+      my $prev_file_name = $prev_inst->{OutputFileName};
 
       $instance->{UniqueModuleName} = $prev_module;  # use previously created module
       $instance->{OutputFileName} = $prev_file_name;  # use previously created file
@@ -1228,8 +1228,8 @@ sub unique_inst_param{
     my $prev_inst = $self->{ModuleCache}{$tgt_module_name};
 
     if ($self->does_generate_same($instance, $prev_inst)) {
-      my $prev_module = $base_module_name . $instance_param_list;
-      my $prev_file_name = $prev_module . $instance->{OutfileSuffix};
+      my $prev_module = $prev_inst->{UniqueModuleName};
+      my $prev_file_name = $prev_inst->{OutputFileName};
 
       $instance->{UniqueModuleName} = $prev_module;  # use previously created module
       $instance->{OutputFileName} = $prev_file_name;  # use previously created file
