@@ -2330,7 +2330,7 @@ sub gen_param_abbrevs {
     while (my ($abbrev, $params) = each(%abbrev_srcs)) {
       next if (scalar(@$params) <= 1);
 
-      print "  Conflicting parameters: " . join(' ', @$params) . "\n"
+      print STDERR "  Conflicting parameters: " . join(' ', @$params) . "\n"
         if $self->{Debug} & 2;
       $done = 0;
       my $i_idx = each @$params;
@@ -2339,7 +2339,7 @@ sub gen_param_abbrevs {
       my ($i_words, $i_regions) = @{$wr_pairs{$i_param}};
       while (my $j_idx = each @$params) {
         my $j_param = $params->[$j_idx];
-        print "  Disabmiguating $i_param and $j_param\n"
+        print STDERR "  Disabmiguating $i_param and $j_param\n"
           if $self->{Debug} & 2;
 
         my $j_abbrev = $abbrevs{$j_param};
@@ -2352,21 +2352,21 @@ sub gen_param_abbrevs {
           my $j_word = $j_words->[$w_num];
 
           if ($i_word ne $j_word) {
-            for (my $w_idx = 0; $w_idx < length($i_word); $w_idx++) {
+            for (my $w_idx = 0; $w_idx < length($i_word) || $w_idx < length($j_word); $w_idx++) {
               if (substr($i_word, $w_idx, 1) ne substr($j_word, $w_idx, 1)) {
                 my $i_region = $i_regions->[$w_num];
                 my $j_region = $j_regions->[$w_num];
 
-                if ($w_idx + 1 > $i_region) {
+                if ($w_idx + 1 > $i_region && $w_idx < length($i_word)) {
                   $i_regions->[$w_num] = $w_idx + 1;
                   $updated = 1;
-                  print "  $i_param: $w_num set to " . ($w_idx + 1) . "\n"
+                  print STDERR "  $i_param: $w_num set to " . ($w_idx + 1) . "\n"
                     if $self->{Debug} & 2;
                 }
-                if ($w_idx + 1 > $j_region) {
+                if ($w_idx + 1 > $j_region && $w_idx < length($j_word)) {
                   $j_regions->[$w_num] = $w_idx + 1;
                   $updated = 1;
-                  print "  $j_param: $w_num set to " . ($w_idx + 1) . "\n"
+                  print STDERR "  $j_param: $w_num set to " . ($w_idx + 1) . "\n"
                     if $self->{Debug} & 2;
                 }
 
